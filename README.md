@@ -1,4 +1,4 @@
-# gol-compute-shader
+# Godot GOL Compute Shader
 
 ![](preview_image.png)
 
