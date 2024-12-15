@@ -1,0 +1,58 @@
+[gd_scene load_steps=12 format=3 uid="uid://qagfombmtayj"]
+
+[ext_resource type="Script" uid="uid://ntusden5tebb" path="res://main.gd" id="1_0xm2m"]
+[ext_resource type="Shader" uid="uid://cj14nhbrbyfk7" path="res://dot_matrix.gdshader" id="2_1bvp3"]
+[ext_resource type="Script" uid="uid://hi5mulsnono0" path="res://dispatcher.gd" id="2_7mycd"]
+[ext_resource type="Texture2D" uid="uid://cm35uwojp441e" path="res://icon.svg" id="2_h2yge"]
+[ext_resource type="Texture2D" uid="uid://bla7l0w67owtk" path="res://alive_tex.png" id="3_lquwl"]
+[ext_resource type="Texture2D" uid="uid://1tb56jw870xn" path="res://dead_tex.png" id="4_7mycd"]
+[ext_resource type="Script" uid="uid://blwfbbocl4juv" path="res://camera.gd" id="7_272bh"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_lquwl"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7mycd"]
+width = 1024
+height = 1024
+generate_mipmaps = false
+normalize = false
+noise = SubResource("FastNoiseLite_lquwl")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lquwl"]
+shader = ExtResource("2_1bvp3")
+shader_parameter/deadTexture = ExtResource("4_7mycd")
+shader_parameter/aliveTexture = ExtResource("3_lquwl")
+shader_parameter/binaryDataTexture = SubResource("NoiseTexture2D_7mycd")
+shader_parameter/GRID_SIZE = 1024
+
+[sub_resource type="Environment" id="Environment_272bh"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 1.0
+glow_blend_mode = 0
+glow_hdr_threshold = 0.0
+glow_hdr_scale = 0.38
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_0xm2m")
+
+[node name="Dispatcher" type="Node" parent="." node_paths=PackedStringArray("_renderer")]
+script = ExtResource("2_7mycd")
+_UPDATE_FREQUENCY = 20
+COMPUTE_SHADER_FILE = "uid://da8058db3uehl"
+_renderer = NodePath("../Renderer")
+
+[node name="Renderer" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_lquwl")
+position = Vector2(960, 540)
+scale = Vector2(15, 15)
+texture = ExtResource("2_h2yge")
+metadata/_edit_lock_ = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_272bh")
+
+[node name="Camera" type="CharacterBody2D" parent="."]
+position = Vector2(960, 540)
+script = ExtResource("7_272bh")
+
+[node name="Camera2D" type="Camera2D" parent="Camera"]
